@@ -6,13 +6,13 @@
 ---- Constants
 local ARGUMENT_FUNCTIONS = {}
 local HELP = [[
-Usage: lilypad [COMMAND] [FLAGS]
+Usage: erde_roblox [COMMAND] [FLAGS]
 
-Manages the development workflow when using the Fennel Programming Language in
-Roblox Studio
+Manages the development workflow when using the Erde Programming Language in
+Roblox Studio!
 
 COMMANDS
-    start       :Watches the all the Fennel files in ./src and compiles them to Lua.
+    start       :Watches the all the Erde files in ./src and compiles them to Lua.
                  Places compiled files in the same directory as the target file.
 FLAGS
     --version   :Shows the current build version of lilypad.
@@ -24,8 +24,8 @@ local fileCache = {}
 
 ---- Functions
 -- Getters
-local function getFennelFiles()
-	return io.popen([[where /r .\\src *.fnl]])
+local function getFiles()
+	return io.popen([[where /r .\\src *.erde]])
 end
 
 local function getFileContent(path)
@@ -44,16 +44,12 @@ end
 
 -- Setters
 local function setFileExtension(path)
-	return string.gsub(path, ".fnl", ".lua")
+	return string.gsub(path, ".erde", ".lua")
 end
 
 -- Booleans
 local function isFileNew(path)
-	if fileCache[path] then
-		return false
-	else
-		return true
-	end
+	return fileCache[path]
 end
 
 local function isFileChanged(path)
@@ -66,7 +62,7 @@ local function compileFile(path)
 
 	fileCache[path] = getFileContent(path)
 
-	os.execute([[fennel --compile ]] .. path .. [[ > ]] .. setFileExtension(path))
+	os.execute("erde compile" .. path)
 end
 
 local function removeFile()
@@ -74,7 +70,7 @@ local function removeFile()
 end
 
 local function watchFiles()
-	for path in getFennelFiles():lines() do
+	for path in getFiles():lines() do
 		if isFileNew(path) or isFileChanged(path) then
 			compileFile(path)
 		end
@@ -99,7 +95,7 @@ ARGUMENT_FUNCTIONS.start = function()
 end
 
 ARGUMENT_FUNCTIONS["--version"] = function()
-	print("LilyPad Version: 1")
+	print("erde_roblox Version: 1")
 	os.exit()
 end
 
