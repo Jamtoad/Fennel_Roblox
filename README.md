@@ -22,6 +22,6 @@ COMMANDS
     start       :Watches the all the Fennel files in ./src and compiles them to Lua.
                  Places compiled files in the same directory as the target file.
 FLAGS
-    --version   :Shows the current build version of lilypad.
+    --version   :Shows the current build version of fennel_roblox.
     --help      :Shows this help text.
 ```
