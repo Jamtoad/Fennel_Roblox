@@ -6,16 +6,14 @@
 ---- Constants
 local ARGUMENT_FUNCTIONS = {}
 local HELP = [[
-Usage: erde_roblox [COMMAND] [FLAGS]
-
-Manages the development workflow when using the Erde Programming Language in
-Roblox Studio!
-
+Usage: fennel_roblox [COMMAND] [FLAGS]
+Manages the development workflow when using the Fennel Programming Language in
+Roblox Studio
 COMMANDS
-    start       :Watches the all the Erde files in ./src and compiles them to Lua.
+    start       :Watches the all the Fennel files in ./src and compiles them to Lua.
                  Places compiled files in the same directory as the target file.
 FLAGS
-    --version   :Shows the current build version of lilypad.
+    --version   :Shows the current build version of fennel_roblox.
     --help      :Shows this help text.
 ]]
 
@@ -24,8 +22,8 @@ local fileCache = {}
 
 ---- Functions
 -- Getters
-local function getFiles()
-	return io.popen([[where /r .\\src *.erde]])
+local function getFennelFiles()
+	return io.popen([[where /r .\\src *.fnl]])
 end
 
 local function getFileContent(path)
@@ -44,12 +42,16 @@ end
 
 -- Setters
 local function setFileExtension(path)
-	return string.gsub(path, ".erde", ".lua")
+	return string.gsub(path, ".fnl", ".lua")
 end
 
 -- Booleans
 local function isFileNew(path)
-	return fileCache[path]
+	if fileCache[path] then
+		return false
+	else
+		return true
+	end
 end
 
 local function isFileChanged(path)
@@ -62,7 +64,7 @@ local function compileFile(path)
 
 	fileCache[path] = getFileContent(path)
 
-	os.execute("erde compile" .. path)
+	os.execute([[fennel --compile ]] .. path .. [[ > ]] .. setFileExtension(path))
 end
 
 local function removeFile()
@@ -70,7 +72,7 @@ local function removeFile()
 end
 
 local function watchFiles()
-	for path in getFiles():lines() do
+	for path in getFennelFiles():lines() do
 		if isFileNew(path) or isFileChanged(path) then
 			compileFile(path)
 		end
@@ -95,7 +97,7 @@ ARGUMENT_FUNCTIONS.start = function()
 end
 
 ARGUMENT_FUNCTIONS["--version"] = function()
-	print("erde_roblox Version: 1")
+	print("fennel_roblox Version: 1")
 	os.exit()
 end
 
